@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css"
+    />
+    <title>Products Editor</title>
+  </head>
+  <style></style>
+  <body>
+    <div id="app">
+      <header>
+        <div class="container">
+          <div class="hero is-info is-bold">
+            <div class="hero-body">
+              <h1 class="is-size-1">Products</h1>
+            </div>
+          </div>
+        </div>
+      </header>
+      <section class="section">
+        <div class="container">
+          <div>
+            <button class="button is-info" @click="showModal = true">
+              + Create Product
+            </button>
+          </div>
+          <div>
+            <table class="table is-fullwidth is-striped">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(product, index) in products" v-key="product.id">
+                  <td align="center">
+                    <figure class="image is-32x32">
+                      <img class="is-rounded" :src="product.imageUrl" alt="" />
+                    </figure>
+                  </td>
+                  <td>
+                    <input
+                      class="input is-inactive"
+                      @focus="toggleState($event)"
+                      @blur="toggleState($event)"
+                      type="test"
+                      v-model="product.name"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      class="input is-inactive"
+                      @focus="toggleState($event)"
+                      @blur="toggleState($event)"
+                      type="test"
+                      v-model="product.price"
+                    />
+                  </td>
+                  <td align="center">
+                    <button class="button" @click="updateProduct(index)">
+                      Update
+                    </button>
+                  </td>
+                  <td>
+                    <a
+                      class="delete is-large has-background-danger"
+                      @click="deleteProduct(index)"
+                    ></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="has-text-centered" v-show="products.length < 1">
+              <h2 class="is-size-4 has-text-info">Loading...</h2>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="modal" :class="{ 'is-active': showModal }">
+        <div class="modal-background" @click="showModal = false"></div>
+        <div class="modal-content">
+          <div class="box">
+            <h3 class="is-size-3">Create Product</h3>
+            <hr />
+            <div class="field">
+              <p class="control">
+                <input
+                  class="input"
+                  type="text"
+                  placeholder="Image URL"
+                  value=""
+                />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <input class="input" type="text" placeholder="Name" value="" />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <input type="text" class="input" placeholder="Price" />
+              </p>
+            </div>
+            <button class="button is-info">Create</button>
+          </div>
+        </div>
+        <button
+          class="modal-close is-large"
+          aria-label="close"
+          @click="showModal = false"
+        ></button>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script>
+      (function() {
+        const API = "https://api-learn-module.azurewebsites.net/api";
+        const KEY = "P4NWSPirRiTf98NGGOAcXolSw/iG3XqpqEVl7UqLxOoiBo8PYdDaUA==";
+
+        new Vue({
+          el: "#app",
+          data: {
+            showModal: false,
+            products: []
+          },
+          mounted() {
+            this.getProducts();
+          },
+          methods: {
+            getProducts() {
+              axios
+                .get(`${API}/products?code=${KEY}`)
+                .then(response => {
+                  this.products = response.data;
+                })
+                .catch(err => {
+                  alert("Unable to GET products");
+                });
+            },
+            updateProduct(index) {
+              alert(`Update product: ${index}`);
+            },
+            createProduct() {},
+            deleteProduct(index) {
+              alert(`Delete product: ${index}`);
+            },
+            toggleState(event) {
+              event.target.classList.toggle("is-inactive");
+            }
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
