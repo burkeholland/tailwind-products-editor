@@ -10,7 +10,7 @@
   "settings": {
     "debug.internalConsoleOptions": "neverOpen",
     "workbench.sideBar.location": "left",
-    "workbench.statusBar.visible": false,
+
     "cosmosDB.showSavePrompt": true
   }
 }
