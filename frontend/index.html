@@ -8,9 +8,19 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <title>Products Editor</title>
+    <style>
+      #toast {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        padding: 20px;
+        z-index: 99999;
+      }
+    </style>
   </head>
-  <style></style>
+  <style></style> 
   <body>
     <div id="app">
       <header>
@@ -33,36 +43,36 @@
             <table class="table is-fullwidth is-striped">
               <thead>
                 <tr>
-                  <th></th>
                   <th>Name</th>
+                  <th>Brand</th>
                   <th>Price</th>
+                  <th>Units in Stock</th>
                   <th></th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(product, index) in products" v-key="product.id">
-                  <td align="center">
-                    <figure class="image is-32x32">
-                      <img class="is-rounded" :src="product.imageUrl" alt="" />
-                    </figure>
+                  <td>
+                    <input class="input" type="text" v-model="product.name" />
+                  </td>
+                  <td>
+                    <label for="" class="label">
+                      {{ brand }}
+                    </label>
                   </td>
                   <td>
                     <input
-                      class="input is-inactive"
-                      @focus="toggleState($event)"
-                      @blur="toggleState($event)"
-                      type="test"
-                      v-model="product.name"
+                      class="input"
+                      type="number"
+                      v-model="product.price"
                     />
                   </td>
                   <td>
                     <input
-                      class="input is-inactive"
-                      @focus="toggleState($event)"
-                      @blur="toggleState($event)"
-                      type="test"
-                      v-model="product.price"
+                      class="input"
+                      type="number"
+                      v-model="product.stockUnits"
                     />
                   </td>
                   <td align="center">
@@ -73,7 +83,7 @@
                   <td>
                     <a
                       class="delete is-large has-background-danger"
-                      @click="deleteProduct(index)"
+                      @click="deleteProduct(product.id, product.brand.name, index)"
                     ></a>
                   </td>
                 </tr>
@@ -82,6 +92,9 @@
             <div class="has-text-centered" v-show="products.length < 1">
               <h2 class="is-size-4 has-text-info">Loading...</h2>
             </div>
+          </div>
+          <div id="toast" v-show="toast.show" class="container" :class="['has-background-' + toast.type]">
+            <h2 class="is-size-5 has-text-white">{{ toast.message }}</h2>
           </div>
         </div>
       </section>
@@ -94,24 +107,36 @@
             <div class="field">
               <p class="control">
                 <input
+                  v-model="newProduct.name"
                   class="input"
                   type="text"
-                  placeholder="Image URL"
+                  placeholder="Product Name"
                   value=""
                 />
               </p>
             </div>
             <div class="field">
               <p class="control">
-                <input class="input" type="text" placeholder="Name" value="" />
+                <div class="select">
+                  <select v-model="newProduct.brand.name">
+                    <option v-for="brand in brands" v-bind:value="brand">
+                      {{ brand }}
+                    </option>
+                  </select>
+                </div>
               </p>
             </div>
             <div class="field">
               <p class="control">
-                <input type="text" class="input" placeholder="Price" />
+                <input type="number" class="input" placeholder="Price" v-model="newProduct.price" />
               </p>
             </div>
-            <button class="button is-info">Create</button>
+            <div class="field">
+              <p class="control">
+                <input type="number" class="input" placeholder="Units in Stock" v-model="newProduct.stockUnits" />
+              </p>
+            </div>
+            <button class="button is-info" @click="createProduct()">Create</button>
           </div>
         </div>
         <button
@@ -121,46 +146,7 @@
         ></button>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
-    <script>
-      (function() {
-        const API = "";
-        const KEY = "";
-
-        new Vue({
-          el: "#app",
-          data: {
-            showModal: false,
-            products: []
-          },
-          mounted() {
-            this.getProducts();
-          },
-          methods: {
-            getProducts() {
-              axios
-                .get(`${API}/products?code=${KEY}`)
-                .then(response => {
-                  this.products = response.data;
-                })
-                .catch(err => {
-                  alert("Unable to GET products");
-                });
-            },
-            updateProduct(index) {
-              alert(`Update product: ${index}`);
-            },
-            createProduct() {},
-            deleteProduct(index) {
-              alert(`Delete product: ${index}`);
-            },
-            toggleState(event) {
-              event.target.classList.toggle("is-inactive");
-            }
-          }
-        });
-      })();
-    </script>
+    <script src="index.js"></script>
   </body>
 </html>
